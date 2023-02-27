@@ -33,4 +33,4 @@ driver.execute_script("arguments[0].click();", accept_cookies)
 #---------Lancer la recherche-----------
 
 
-
+vfgatht
