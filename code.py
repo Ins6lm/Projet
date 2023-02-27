@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Feb 23 16:46:39 2023
+Created on Wed Feb 22 17:13:22 2023
 
 @author: Ines
 """
@@ -8,17 +8,29 @@ Created on Thu Feb 23 16:46:39 2023
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import time
+from selenium.webdriver.common.by import By
 
-url="https://www.omio.fr/"
+def trip(Destination,Depart,Return):
+    
 
-options=webdriver.ChromeOptions()
-options.add_argument('headless')
+url="https://www.crous-strasbourg.fr/restaurant/resto-u-paul-appell/"
 
-from selenium.webdriver.chrome.service import Service
-service = Service("./chromedriver")
-browser = webdriver.Chrome(service=service, options=options)
-browser.get(url)
 
-time.sleep(3)
+browser=webdriver.Chrome("./chromedriver",options=options)
+browser.get('https://www.crous-strasbourg.fr/restaurant/resto-u-paul-appell/')
+
+time.sleep(5)
+
+webdriver.Chrome()
+
+#---------accepter les cookies----------
+
+accept_cookies=driver.find_element(By.XPATH,//*[@id="alert-banner"]/div[2]/a)
+
+driver.execute_script("arguments[0].click();", accept_cookies)
+
+
+#---------Lancer la recherche-----------
+
 
 
