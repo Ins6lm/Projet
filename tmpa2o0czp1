@@ -1,0 +1,54 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Feb 22 17:13:22 2023
+
+@author: Ines
+"""
+
+from bs4 import BeautifulSoup
+from selenium import webdriver
+import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+
+
+def trip(Destination,Depart,Return):
+    
+
+url="https://www.rome2rio.com/"
+
+
+browser=webdriver.Chrome()
+browser.get(url)
+
+time.sleep(5)
+
+#---------accepter les cookies----------
+
+browser.find_element(By.XPATH,'//*[@id="alert-banner"]/div[2]/a').click()
+
+#---------aller dans ticket---------
+
+browser.find_element(By.XPATH, '//*[@id="button-tickets"]').click()
+
+#---------décocher les hotels---------
+
+browser.find_element(By.XPATH, '//*[@id="label_search_hotels"]').click()
+
+#####---------Lancer la recherche-----------
+
+##Strasbourg
+
+search_stras = browser.find_element(By.XPATH,'//*[@id="tickets-from"]')
+search_stras.clear()
+search_stras.send_keys("Strasbourg")
+search_stras.send_keys(Keys.RETURN)
+
+##Destination
+
+search_Destination = browser.find_element(By.XPATH,'//*[@id="tickets-to"]')
+search_Destination.clear()
+search_Destination.send_keys("Destination")
+search_Destination.send_keys(Keys.RETURN)
+
+##Depart
