@@ -12,103 +12,121 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from datetime import datetime
 import re
-from selenium.webdriver.common.keys import Keys
 
-def trip(Destination,Depart,Return):
+def trvlCity(Destination, Depart):
+    
+    ##Mettre la date au bon format
+    
+    dep_obj = datetime.strptime(Depart, "%d %B %Y")
+    Depart = datetime.strftime(dep_obj, "%b %d, %Y")
 
-dep_string = "03 March 2023"
-dep_obj = datetime.strptime(dep_string, "%d %B %Y")
-Depart = datetime.strftime(dep_obj, "%b %#d, %Y")
-print(Depart)
-ret_string = "05 March 2023"
-ret_obj = datetime.strptime(ret_string, "%d %B %Y")
-Return = datetime.strftime(ret_obj, "%b %#d, %Y")
+    url="https://www.rome2rio.com/"
+    
+    ##Utilisation du webdriver de Selenium
 
-Destination='London'
+    browser=webdriver.Chrome()
+    browser.get(url)
 
-url="https://www.rome2rio.com/"
+    #---------accepter les cookies----------
 
+    browser.find_element(By.XPATH,'//*[@id="alert-banner"]/div[2]/a').click()
 
-browser=webdriver.Chrome()
-browser.get(url)
+    #---------aller dans ticket---------
 
-time.sleep(5)
+    browser.find_element(By.XPATH, '//*[@id="button-tickets"]').click()
 
-#---------accepter les cookies----------
+    #---------décocher les hotels---------
 
-browser.find_element(By.XPATH,'//*[@id="alert-banner"]/div[2]/a').click()
+    browser.find_element(By.XPATH, '//*[@id="label_search_hotels"]').click()
 
-#---------aller dans ticket---------
+    #####---------Lancer la recherche-----------
 
-#browser.find_element(By.XPATH, '//*[@id="button-tickets"]').click()
+    ##Mettre Strasbourg en ville de départ
+    
+    search_stras = browser.find_element(By.XPATH,'//*[@id="tickets-from"]')
+    search_stras.clear()
+    search_stras.send_keys("Strasbourg")
+    search_stras.send_keys(Keys.RETURN)
 
-#---------décocher les hotels---------
+    ##Destination
 
-browser.find_element(By.XPATH, '//*[@id="label_search_hotels"]').click()
+    search_Destination = browser.find_element(By.XPATH,'//*[@id="tickets-to"]')
+    search_Destination.clear()
+    search_Destination.send_keys(Destination)
+    search_Destination.send_keys(Keys.RETURN)
 
-#####---------Lancer la recherche-----------
+    ##Depart
 
-##Strasbourg
+    search_depart=browser.find_element(By.XPATH, '//*[@id="tab-tickets"]/div[2]/div[2]/div[1]/a/span[1]')
+    search_depart.clear()
+    search_depart.send_keys('Depart')
+    search_depart.send_keys(Keys.RETURN)
 
-search_stras = browser.find_element(By.XPATH,'//*[@id="search-from"]')
-search_stras.clear()
-search_stras.send_keys("Strasbourg")
-search_stras.send_keys(Keys.RETURN)
+    ##Search
 
-##Destination
-
-search_Destination = browser.find_element(By.XPATH,'//*[@id="search-to"]')
-search_Destination.clear()
-search_Destination.send_keys(Destination)
-search_Destination.send_keys(Keys.RETURN)
-
-##Depart
-
-#search_depart=browser.find_element(By.XPATH, '//*[@id="tab-tickets"]/div[2]/div[2]/div[1]/a/span[1]')
-#search_depart.send_keys('Depart')
-#search_depart.send_keys(Keys.RETURN)
-
-##Return
-
-#search_return=browser.find_element(By.XPATH, '//*[@id="tab-tickets"]/div[2]/div[2]/div[2]/a/span[1]')
-#search_return.clear()
-#search_return.send_keys('Return')
-#search_return.send_keys(Keys.RETURN)
-
-##Search
-
-search=browser.find_element(By.XPATH, '//*[@id="transport-search"]/span[2]').click()
+    search=browser.find_element(By.XPATH, '//*[@id="transport-search"]/span[2]').click()
 
 ###----------Récupération des résultats------------------
 
-#soup = BeautifulSoup(browser.page_source,'html.parser')
+###Vol
 
-##Nbrésultat##----------------Se débarasser des options drive
+    Fly=browser.find_element(By.XPATH,'//*[@id="app"]/div/div/div[2]/div[2]/div[3]/span[2]/div/span').text
 
-ways=browser.find_elements(By.CLASS_NAME,'sc-3enhc-4 kcnpEo')
-print(ways)
+    if Fly == 'N/A':
+        print("No flight available")
+    else:
+        browser.find_element(By.XPATH,'').click
+        Ftimedep = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[1]/div/div[2]/div[1]/div[1]/span').text
+        Ftime = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[1]/div/div[3]/span/span[1]/span').text
+        FItinerary = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[1]/div/div[2]/div[2]/span').text
+        FPrice = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[2]/div/div[1]/span/span').text 
+        print(Ftimedep, Ftime, FItinerary, FPrice)
 
+###Train
 
+        Train=browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div[2]/div[1]').text
 
-#count = len(soup.find_all('(^)class="sc-1i17y0o-0 bdLgJQ"'))
-p#rint(count)
+    if Train == 'N/A':
+        print("No train available")
+    else:
+        Ttimedep = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[2]/div/div[1]/span/span').text
+        Ttime = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[1]/div/div[3]/span/span[1]/span').text
+        TItinerary = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[1]/div/div[2]/div[2]/span').text
+        TPrice = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[2]/div/div[1]/span/span').text 
+        print (Ttimedep, Ttime, TItinerary, TPrice)
+  
+    ###Bus
+    
+    Bus=browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div[2]/div[2]/span[2]/div/span/span').text
+    if Bus =='N/A':
+        print("No bus available")
+    else:
+        browser.find_element(By.XPATH,'//*[@id="app"]/div/div/div[2]/div[2]/div[2]')
+        timedep = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[1]/div/div[2]/div[1]/div[1]/span').text
+        time = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[1]/div/div[3]/span/span[1]/span').text
+        Itinerary = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[1]/div/div[2]/div[2]/span').text
+        Price = browser.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div[1]/div/div/div/div[2]/div[1]/div/div/div/section[2]/div/div[1]/span/span').text 
+        print (timedep, time, Itinerary, Price)
 
-##Options 
+####-----Meteo---
 
-#ways = re.findall('<h1 class="sc-1i17y0o-4 djVajZ">(.*?)</h1>',str(soup))
+    url='https://www.ecosia.org/'
 
-#print(ways)
+    browser=webdriver.Chrome()
+    browser.get(url)
 
-##Récup les durées des trajets
+    search_meteo = browser.find_element(By.XPATH,'//*[@id="__layout"]/div/div[1]/header/div/form/div/div/div[1]/input')
+    search_meteo.clear()
+    search_meteo.send_keys(Destination,' Meteo')
+    search_meteo.send_keys(Keys.RETURN)
 
-#time=browser.find_element(By.XPATH,"//*[@id="main"]/div[1]/div[1]/div/div/div/div[1]/a[2]/div[2]/div[1]/time").text
+    temp=browser.find_element(By.XPATH,'//*[@id="main"]/div[1]/section/div[2]/div[2]/section/div/div/div[2]/div[1]/div[1]/div').text
+    temp
 
-#price=re.findall('<span>(.*?)</span>',str(soup))
-
-
-##classer les colonnes et faire un tableau
-
-#-------------choix du trajet---------
-
-Pr=(Fastest, Cheapest, Comfiest)
+    température = f"La température est de {temp}°"
+    température
+    
+    ###On affiche le résultat
+    
+    print(timedep, time, Itinerary, Price, température)
 
